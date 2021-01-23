@@ -191,7 +191,7 @@ if __name__ == '__main__':
                 epoch_val_accuracy = 0
                 epoch_val_loss = 0
                 func = torch.nn.Softmax(dim=1)
-                for data, label in validLoader:
+                for data, label in tqdm(validLoader):
                     # labels_epoch.extend(label.numpy())
                     data = data.to(device)
                     label = label.to(device)
