@@ -52,7 +52,7 @@ def seed_everything(seed):
 
 if __name__ == '__main__':
     seed_everything(cfg.SEED)
-    DIR_CV = './BBN/cassava/data/new_cv20/'
+    DIR_CV = '../BBN/cassava/data/new_cv20/'
     # DIR_CV = '/home/zhucc/kaggle/pytorch_classification/data/cv/'
     target_names = ['class 0', 'class 1', 'class 2', 'class 3', 'class 4']
     RandomAugment = True
