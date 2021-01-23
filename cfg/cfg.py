@@ -1,6 +1,6 @@
 class cfg:
     # project
-    NAME = 'BBN.cassava.new_cv20.resnext50.SCE.SGD.cosine.RandAugment.50epoch'
+    NAME = 'ViT.cassava.new_cv20.CE.SGD.cosine.RandAugment.100epoch'
     OUTPUT_DIR = './output/cassava/new_cv20'
     CPU_MODE = False
     GPU_ID = '0'
