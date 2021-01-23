@@ -208,6 +208,23 @@ if __name__ == '__main__':
                     epoch_val_accuracy += acc / len(validLoader)
                     epoch_val_loss += val_loss / len(validLoader)
                 loss_dict["valid_loss"], acc_dict["valid_acc"] = epoch_val_loss, epoch_val_accuracy
+                if epoch_val_accuracy > best_result:
+                    best_result, best_epoch = epoch_val_accuracy, epoch
+                    torch.save({
+                        'state_dict': model.state_dict(),
+                        # 'state_dict': model.module.state_dict(),
+                        # 'epoch': epoch,
+                        # 'best_result': best_result,
+                        # 'best_epoch': best_epoch,
+                        # 'scheduler': scheduler.state_dict(),
+                        # 'optimizer': optimizer.state_dict(),
+                    }, os.path.join(model_dir, f"best_model_{best_epoch}_{epoch_val_accuracy}.pth")
+                    )
+                logger.info(
+                    "--------------Best_Epoch:{:>3d}    Best_Acc:{:>5.2f}%--------------".format(
+                        best_epoch, best_result * 100
+                    )
+                )
                 # result_epoch = classification_report(labels_epoch, prediction_epoch, labels=[0, 1, 2, 3, 4],
                 #                                      target_names=target_names,
                 #                                      output_dict=True, digits=3)
@@ -224,11 +241,11 @@ if __name__ == '__main__':
             if epoch % cfg.SAVE_STEP == 0:
                 torch.save({
                     'state_dict': model.state_dict(),
-                    'epoch': epoch,
-                    'best_result': best_result,
-                    'best_epoch': best_epoch,
-                    'scheduler': scheduler.state_dict(),
-                    'optimizer': optimizer.state_dict()
+                    # 'epoch': epoch,
+                    # 'best_result': best_result,
+                    # 'best_epoch': best_epoch,
+                    # 'scheduler': scheduler.state_dict(),
+                    # 'optimizer': optimizer.state_dict()
                 }, model_save_path)
 
             if cfg.TENSORBOARD_ENABLE:

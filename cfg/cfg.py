@@ -38,7 +38,7 @@ class cfg:
     WARM_EPOCH = 5
 
     SHOW_STEP = 50
-    SAVE_STEP = 1
+    SAVE_STEP = 5
     VALID_STEP = 1
     SEED = 2021
 
