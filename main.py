@@ -179,7 +179,6 @@ if __name__ == '__main__':
                 optimizer.step()
 
                 acc = (output.argmax(dim=1) == label).float().mean()
-                print(f"acc = {acc}")
                 epoch_accuracy += acc / len(trainLoader)
                 epoch_loss += loss / len(trainLoader)
             lr = optimizer.param_groups[0]['lr']
