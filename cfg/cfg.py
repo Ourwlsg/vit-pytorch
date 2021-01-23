@@ -8,9 +8,9 @@ class cfg:
     CLS_NUM = 5
 
     # train
-    BATCH_SIZE = 256
+    BATCH_SIZE = 512
     SHUFFLE = True
-    NUM_WORKERS = 32
+    NUM_WORKERS = 128
     PIN_MEMORY = True
     MAX_EPOCH = 100
     TENSORBOARD_ENABLE = True
