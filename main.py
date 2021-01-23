@@ -23,7 +23,7 @@ from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 from lib.CassavaDataset import CassavaDataset
 from vit_pytorch.efficient import ViT
