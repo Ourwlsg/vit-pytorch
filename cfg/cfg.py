@@ -29,8 +29,8 @@ class cfg:
     #  LOSS_TYPE = 'LabelSmoothingCrossEntropy'
 
     # SCHEDULER_TYPE = 'cosine'
-    # TYPE = 'multistep'
-    TYPE = 'warmup'
+    # SCHEDULER_TYPE = 'multistep'
+    SCHEDULER_TYPE = 'warmup'
     LR_STEP = [30, 50, 70]
     LR_FACTOR = 1.0 / 3
     COSINE_DECAY_END = 0
