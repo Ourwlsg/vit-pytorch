@@ -22,6 +22,7 @@ from sklearn.model_selection import train_test_split
 from tensorboardX import SummaryWriter
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.sampler import WeightedRandomSampler
 from torchvision import datasets, transforms
 from tqdm import tqdm
 
@@ -52,8 +53,8 @@ def seed_everything(seed):
 
 if __name__ == '__main__':
     seed_everything(cfg.SEED)
-    DIR_CV = '../BBN/cassava/data/new_cv20/'
-    # DIR_CV = '/home/zhucc/kaggle/pytorch_classification/data/cv/'
+    # DIR_CV = '../BBN/cassava/data/new_cv20/'
+    DIR_CV = '/home/zhucc/kaggle/pytorch_classification/data/cv/'
     target_names = ['class 0', 'class 1', 'class 2', 'class 3', 'class 4']
     RandomAugment = True
     device = torch.device("cpu" if cfg.CPU_MODE else "cuda")
@@ -66,10 +67,21 @@ if __name__ == '__main__':
         train_set = CassavaDataset(train_label_file, mode="train", transform_name="RandomAugment")
         valid_set = CassavaDataset(val_label_file, mode="valid", transform_name=None)
 
+        ## resample
+        # 数据集中，每一类的数目。
+        class_sample_counts = train_set.get_class_sample_counts()
+        weights = 1. / torch.tensor(class_sample_counts, dtype=torch.float)
+        # 这个 get_classes_for_all_imgs是关键
+        train_targets = train_set.get_classes_for_all_imgs()
+        samples_weights = weights[train_targets]
+
+        sampler = WeightedRandomSampler(weights=samples_weights, num_samples=len(samples_weights), replacement=True)
+        # when using weightedRandomSampler, it is already balanced random, so DO NOT shuffle again
         trainLoader = DataLoader(
             train_set,
             batch_size=cfg.BATCH_SIZE,
-            shuffle=cfg.SHUFFLE,
+            shuffle=False,
+            sampler=sampler,
             num_workers=cfg.NUM_WORKERS,
             pin_memory=cfg.PIN_MEMORY,
             drop_last=True
@@ -102,9 +114,9 @@ if __name__ == '__main__':
         )
 
         model = ViT(
-            dim=1024,
+            dim=2048,
             image_size=cfg.INPUT_SIZE,
-            patch_size=64,
+            patch_size=32,
             num_classes=cfg.CLS_NUM,
             transformer=efficient_transformer,
             channels=cfg.INPUT_CHANNEL,
@@ -163,14 +175,13 @@ if __name__ == '__main__':
         best_result, best_epoch, start_epoch = 0, 0, 1
         logger.info("-------------------Train start :{}-------------------".format(cfg.BACKBONE))
         for epoch in range(start_epoch, cfg.MAX_EPOCH+1):
-
+            model.train()
             epoch_loss = 0
             epoch_accuracy = 0
 
-            for data, label in tqdm(trainLoader):
+            for i, (data, label) in enumerate(trainLoader):
                 data = data.to(device)
                 label = label.to(device)
-
                 output = model(data)
                 loss = criterion(output, label)
 
@@ -181,6 +192,9 @@ if __name__ == '__main__':
                 acc = (output.argmax(dim=1) == label).float().mean()
                 epoch_accuracy += acc / len(trainLoader)
                 epoch_loss += loss / len(trainLoader)
+                if i % cfg.SHOW_STEP == 0:
+                    pbar_str = "Epoch:{:>3d}  Batch:{:>3d}/{}  Batch_Loss:{:>5.3f}  Batch_Accuracy:{:>5.2f}%   ".format(
+                        epoch, i, len(trainLoader), loss.item(), acc * 100)
             lr = optimizer.param_groups[0]['lr']
             scheduler.step()
             writer.add_scalar('learning_rate', lr, epoch)
@@ -188,6 +202,7 @@ if __name__ == '__main__':
             labels_epoch = []
             prediction_epoch = []
             with torch.no_grad():
+                model.eval()
                 epoch_val_accuracy = 0
                 epoch_val_loss = 0
                 func = torch.nn.Softmax(dim=1)
@@ -197,9 +212,10 @@ if __name__ == '__main__':
                     label = label.to(device)
 
                     val_output = model(data)
-                    val_loss = criterion(val_output, label)
 
-                    acc = (val_output.argmax(dim=1) == label).float().mean()
+                    val_loss = criterion(val_output, label)
+                    results = func(val_output)
+                    acc = (results.argmax(dim=1) == label).float().mean()
 
                     # score_result = func(val_output)
                     # now_result = torch.argmax(score_result, 1)
@@ -233,7 +249,7 @@ if __name__ == '__main__':
                 #                             digits=3))
 
             print(
-                f"Epoch : {epoch + 1} - loss : {epoch_loss:.4f} - acc: {epoch_accuracy:.4f} - val_loss : {epoch_val_loss:.4f} - val_acc: {epoch_val_accuracy:.4f}\n"
+                f"Epoch : {epoch} - loss : {epoch_loss:.4f} - acc: {epoch_accuracy:.4f} - val_loss : {epoch_val_loss:.4f} - val_acc: {epoch_val_accuracy:.4f}\n"
             )
             # save checkpoint
 

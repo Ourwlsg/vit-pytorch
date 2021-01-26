@@ -1,3 +1,5 @@
+from collections import Counter
+
 import torch
 from torch.utils.data import Dataset
 import numpy as np
@@ -6,6 +8,8 @@ import random
 import cv2
 import albumentations as A
 import torchvision.transforms as transforms
+
+
 from lib.rand_augment import RandomAugment
 
 from cfg.cfg import cfg
@@ -104,6 +108,8 @@ class CassavaDataset(Dataset):
         else:
             self.transform = get_test_transform(size=cfg.INPUT_SIZE)
 
+        self.class_sample_counts = list(Counter(self.targets).values())
+
     def __len__(self):
         return len(self.data)
 
@@ -129,6 +135,12 @@ class CassavaDataset(Dataset):
             annos.append({'category_id': int(target)})
         return annos
 
+    # get labels
+    def get_classes_for_all_imgs(self):
+        return self.targets
+
+    def get_class_sample_counts(self):
+        return self.class_sample_counts
 
 if __name__ == '__main__':
     train_label_file = "/home/zhucc/kaggle/pytorch_classification/data/cv/fold_0/train.txt"
@@ -136,10 +148,31 @@ if __name__ == '__main__':
 
     train_set = CassavaDataset(train_label_file, mode="train", transform_name="RandomAugment")
 
-    train_dataloader = torch.utils.data.DataLoader(train_set, batch_size=64, shuffle=True, num_workers=2)
+    # train_dataloader = torch.utils.data.DataLoader(train_set, batch_size=64, shuffle=True, num_workers=2)
     # val_dataloader = torch.utils.data.DataLoader(val_set, batch_size=64, shuffle=False, num_workers=2)
     #
-    train_loader = iter(train_dataloader)
+
+    from torch.utils.data.sampler import WeightedRandomSampler
+    ## resample
+    # 数据集中，每一类的数目。
+    class_sample_counts = train_set.get_class_sample_counts()
+    weights = 1. / torch.tensor(class_sample_counts, dtype=torch.float)
+    # 这个 get_classes_for_all_imgs是关键
+    train_targets = train_set.get_classes_for_all_imgs()
+    samples_weights = weights[train_targets]
+
+    sampler = WeightedRandomSampler(weights=samples_weights, num_samples=len(samples_weights), replacement=True)
+    # when using weightedRandomSampler, it is already balanced random, so DO NOT shuffle again
+    trainLoader = torch.utils.data.DataLoader(
+        train_set,
+        batch_size=16,
+        shuffle=False,
+        sampler=sampler,
+        num_workers=4,
+        pin_memory=cfg.PIN_MEMORY,
+        drop_last=True
+    )
+    train_loader = iter(trainLoader)
     train_data, train_label = next(train_loader)
     print(train_data.shape, train_label)
     # print("================================")

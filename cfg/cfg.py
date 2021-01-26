@@ -3,14 +3,14 @@ class cfg:
     NAME = 'ViT.cassava.new_cv20.CE.SGD.cosine.RandAugment.100epoch'
     OUTPUT_DIR = './output/cassava/new_cv20'
     CPU_MODE = False
-    GPU_ID = '0'
+    GPU_ID = '2'
     K_FOLD = [4, 3, 2, 1, 0]
     CLS_NUM = 5
 
     # train
-    BATCH_SIZE = 384
+    BATCH_SIZE = 4
     SHUFFLE = True
-    NUM_WORKERS = 64
+    NUM_WORKERS = 2
     PIN_MEMORY = True
     MAX_EPOCH = 100
     TENSORBOARD_ENABLE = True
@@ -37,7 +37,7 @@ class cfg:
     COSINE_DECAY_END = 0
     WARM_EPOCH = 5
 
-    SHOW_STEP = 50
+    SHOW_STEP = 20
     SAVE_STEP = 5
     VALID_STEP = 1
     SEED = 2021
