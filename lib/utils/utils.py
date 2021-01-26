@@ -85,7 +85,7 @@ def get_scheduler(cfg, optimizer):
     elif cfg.SCHEDULER_TYPE == "cosine":
         if cfg.COSINE_DECAY_END > 0:
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-                optimizer, T_max=cfg.COSINE_DECAY_END, eta_min=1e-4
+                optimizer, T_max=cfg.COSINE_DECAY_END, eta_min=1e-5
             )
         else:
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(

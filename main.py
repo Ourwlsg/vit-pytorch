@@ -53,8 +53,8 @@ def seed_everything(seed):
 
 if __name__ == '__main__':
     seed_everything(cfg.SEED)
-    # DIR_CV = '../BBN/cassava/data/new_cv20/'
-    DIR_CV = '/home/zhucc/kaggle/pytorch_classification/data/cv/'
+    DIR_CV = '../BBN/cassava/data/new_cv20/'
+    # DIR_CV = '/home/zhucc/kaggle/pytorch_classification/data/cv/'
     target_names = ['class 0', 'class 1', 'class 2', 'class 3', 'class 4']
     RandomAugment = True
     device = torch.device("cpu" if cfg.CPU_MODE else "cuda")
@@ -106,8 +106,8 @@ if __name__ == '__main__':
         }
 
         efficient_transformer = Linformer(
-            dim=1024,
-            seq_len=64 + 1,  # 7x7 patches + 1 cls-token
+            dim=2048,
+            seq_len=256 + 1,  # 7x7 patches + 1 cls-token
             depth=12,
             heads=8,
             k=64
@@ -195,6 +195,7 @@ if __name__ == '__main__':
                 if i % cfg.SHOW_STEP == 0:
                     pbar_str = "Epoch:{:>3d}  Batch:{:>3d}/{}  Batch_Loss:{:>5.3f}  Batch_Accuracy:{:>5.2f}%   ".format(
                         epoch, i, len(trainLoader), loss.item(), acc * 100)
+                    print(pbar_str)
             lr = optimizer.param_groups[0]['lr']
             scheduler.step()
             writer.add_scalar('learning_rate', lr, epoch)

@@ -3,21 +3,22 @@ class cfg:
     NAME = 'ViT.cassava.new_cv20.CE.SGD.cosine.RandAugment.100epoch'
     OUTPUT_DIR = './output/cassava/new_cv20'
     CPU_MODE = False
-    GPU_ID = '2'
+    GPU_ID = '0'
     K_FOLD = [4, 3, 2, 1, 0]
     CLS_NUM = 5
 
     # train
-    BATCH_SIZE = 4
+    BATCH_SIZE = 16
     SHUFFLE = True
-    NUM_WORKERS = 2
+    NUM_WORKERS = 8
     PIN_MEMORY = True
     MAX_EPOCH = 100
     TENSORBOARD_ENABLE = True
 
     # OPTIMIZER
     OPTIMIZER_TYPE = 'SGD'
-    BASE_LR = 3e-5
+    # BASE_LR = 3e-5
+    BASE_LR = 0.001
     MOMENTUM = 0.9
     WEIGHT_DECAY = 2e-5
 
