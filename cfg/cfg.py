@@ -37,7 +37,7 @@ class cfg:
     COSINE_DECAY_END = 0
     WARM_EPOCH = 5
 
-    SHOW_STEP = 20
+    SHOW_STEP = 5
     SAVE_STEP = 5
     VALID_STEP = 1
     SEED = 2021
