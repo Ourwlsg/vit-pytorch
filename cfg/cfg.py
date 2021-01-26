@@ -17,7 +17,7 @@ class cfg:
     # OPTIMIZER
     OPTIMIZER_TYPE = 'SGD'
     # BASE_LR = 3e-5
-    BASE_LR = 0.0001
+    BASE_LR = 3e-4
     MOMENTUM = 0.9
     WEIGHT_DECAY = 2e-5
 
