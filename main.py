@@ -107,7 +107,7 @@ if __name__ == '__main__':
         }
 
         efficient_transformer = Linformer(
-            dim=2048,
+            dim=1024,
             seq_len=256 + 1,  # 7x7 patches + 1 cls-token
             depth=12,
             heads=8,
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         )
 
         model = ViT(
-            dim=2048,
+            dim=1024,
             image_size=cfg.INPUT_SIZE,
             patch_size=32,
             num_classes=cfg.CLS_NUM,
@@ -226,23 +226,22 @@ if __name__ == '__main__':
                     epoch_val_accuracy += acc / len(validLoader)
                     epoch_val_loss += val_loss / len(validLoader)
                 loss_dict["valid_loss"], acc_dict["valid_acc"] = epoch_val_loss, epoch_val_accuracy
-                if epoch_val_accuracy > best_result:
-                    best_result, best_epoch = epoch_val_accuracy, epoch
-                    torch.save({
-                        'state_dict': model.state_dict(),
-                        # 'state_dict': model.module.state_dict(),
-                        # 'epoch': epoch,
-                        # 'best_result': best_result,
-                        # 'best_epoch': best_epoch,
-                        # 'scheduler': scheduler.state_dict(),
-                        # 'optimizer': optimizer.state_dict(),
-                    }, os.path.join(model_dir, f"best_model_{best_epoch}_{epoch_val_accuracy}.pth")
-                    )
-                logger.info(
-                    "--------------Best_Epoch:{:>3d}    Best_Acc:{:>5.2f}%--------------".format(
-                        best_epoch, best_result * 100
-                    )
+            if epoch_val_accuracy > best_result:
+                best_result, best_epoch = epoch_val_accuracy, epoch
+                torch.save({
+                    'state_dict': model.state_dict(),
+                    # 'state_dict': model.module.state_dict(),
+                    # 'epoch': epoch,
+                    # 'best_result': best_result,
+                    # 'best_epoch': best_epoch,
+                    # 'scheduler': scheduler.state_dict(),
+                    # 'optimizer': optimizer.state_dict(),
+                }, os.path.join(model_dir, f"best_model_{best_epoch}_{epoch_val_accuracy}.pth"))
+            logger.info(
+                "--------------Best_Epoch:{:>3d}    Best_Acc:{:>5.2f}%--------------".format(
+                    best_epoch, best_result * 100
                 )
+            )
                 # result_epoch = classification_report(labels_epoch, prediction_epoch, labels=[0, 1, 2, 3, 4],
                 #                                      target_names=target_names,
                 #                                      output_dict=True, digits=3)
