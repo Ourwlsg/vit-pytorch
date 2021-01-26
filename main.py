@@ -27,6 +27,7 @@ from torchvision import datasets, transforms
 from tqdm import tqdm
 
 from lib.CassavaDataset import CassavaDataset
+from lib.utils.lr_scheduler import WarmupMultiStepLR
 from vit_pytorch.efficient import ViT
 from cfg.cfg import cfg
 

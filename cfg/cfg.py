@@ -1,6 +1,6 @@
 class cfg:
     # project
-    NAME = 'ViT.cassava.new_cv20.CE.SGD.cosine.RandAugment.100epoch'
+    NAME = 'ViT.cassava.new_cv20.CE.SGD.cosine.RandAugment.80epoch'
     OUTPUT_DIR = './output/cassava/new_cv20'
     CPU_MODE = False
     GPU_ID = '0'
@@ -11,13 +11,13 @@ class cfg:
     BATCH_SIZE = 48
     NUM_WORKERS = 16
     PIN_MEMORY = True
-    MAX_EPOCH = 100
+    MAX_EPOCH = 80
     TENSORBOARD_ENABLE = True
 
     # OPTIMIZER
     OPTIMIZER_TYPE = 'SGD'
     # BASE_LR = 3e-5
-    BASE_LR = 0.001
+    BASE_LR = 0.0001
     MOMENTUM = 0.9
     WEIGHT_DECAY = 2e-5
 
@@ -28,14 +28,13 @@ class cfg:
     #  LOSS_TYPE = 'CSCE'
     #  LOSS_TYPE = 'LabelSmoothingCrossEntropy'
 
-
-    SCHEDULER_TYPE = 'cosine'
+    # SCHEDULER_TYPE = 'cosine'
     # TYPE = 'multistep'
-    # TYPE = 'warmup'
-    LR_STEP = [15, 25]
-    LR_FACTOR = 0.1
+    TYPE = 'warmup'
+    LR_STEP = [30, 50, 70]
+    LR_FACTOR = 1.0 / 3
     COSINE_DECAY_END = 0
-    WARM_EPOCH = 5
+    WARM_EPOCH = 10
 
     SHOW_STEP = 5
     SAVE_STEP = 5
