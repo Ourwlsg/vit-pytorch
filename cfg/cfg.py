@@ -8,7 +8,7 @@ class cfg:
     CLS_NUM = 5
 
     # train
-    BATCH_SIZE = 32
+    BATCH_SIZE = 48
     NUM_WORKERS = 16
     PIN_MEMORY = True
     MAX_EPOCH = 100
