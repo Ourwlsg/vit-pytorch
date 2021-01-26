@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
         efficient_transformer = Linformer(
             dim=1024,
-            seq_len=256 + 1,  # 7x7 patches + 1 cls-token
+            seq_len=64 + 1,  # 7x7 patches + 1 cls-token
             depth=12,
             heads=8,
             k=64
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         model = ViT(
             dim=1024,
             image_size=cfg.INPUT_SIZE,
-            patch_size=32,
+            patch_size=64,
             num_classes=cfg.CLS_NUM,
             transformer=efficient_transformer,
             channels=cfg.INPUT_CHANNEL,
@@ -231,11 +231,11 @@ if __name__ == '__main__':
                 torch.save({
                     'state_dict': model.state_dict(),
                     # 'state_dict': model.module.state_dict(),
-                    # 'epoch': epoch,
-                    # 'best_result': best_result,
-                    # 'best_epoch': best_epoch,
-                    # 'scheduler': scheduler.state_dict(),
-                    # 'optimizer': optimizer.state_dict(),
+                    'epoch': epoch,
+                    'best_result': best_result,
+                    'best_epoch': best_epoch,
+                    'scheduler': scheduler.state_dict(),
+                    'optimizer': optimizer.state_dict(),
                 }, os.path.join(model_dir, f"best_model_{best_epoch}_{epoch_val_accuracy}.pth"))
             logger.info(
                 "--------------Best_Epoch:{:>3d}    Best_Acc:{:>5.2f}%--------------".format(
@@ -258,11 +258,11 @@ if __name__ == '__main__':
             if epoch % cfg.SAVE_STEP == 0:
                 torch.save({
                     'state_dict': model.state_dict(),
-                    # 'epoch': epoch,
-                    # 'best_result': best_result,
-                    # 'best_epoch': best_epoch,
-                    # 'scheduler': scheduler.state_dict(),
-                    # 'optimizer': optimizer.state_dict()
+                    'epoch': epoch,
+                    'best_result': best_result,
+                    'best_epoch': best_epoch,
+                    'scheduler': scheduler.state_dict(),
+                    'optimizer': optimizer.state_dict()
                 }, model_save_path)
 
             if cfg.TENSORBOARD_ENABLE:
